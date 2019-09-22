@@ -1,0 +1,95 @@
+import tkinter as tk
+from tkinter import filedialog
+from tkinter import *
+import tkinter.ttk as ttk
+import pygame
+from pygame import mixer
+
+class TkMusic(tk.Frame):
+    def __init__(self, root):
+
+        Frame.__init__(self, root, bg = "GREEN")
+        pygame.mixer.init()
+        self.CreateWidgets()
+    def CreateWidgets(self):
+        self.trackLabel= Label(self,  text	= "SELECT A SONG : ", bg = "LIGHTBLUE")
+        self.trackLabel.grid(row =0,  column =0,  pady =5, padx= 5)
+
+
+        self.trackEntry= Entry(self, width	= 35,  textvariable	= audioTrack)
+        self.trackEntry.grid(row	=0, column= 1,  pady= 5, padx=5)
+
+
+        self.browseButton= Button(self, width= 20,text=  "BROWSE",command= self.Browse, bg	= "ORANGE")
+        self.browseButton.grid(row= 0, column= 2,  pady=5,padx=5)
+
+
+        self.playButton=Button(self, width= 20,text = " ▶",command= self.Play, bg = "LIGHTGREEN")
+        self.playButton.grid(row =1,column= 0,pady= 5,padx= 5)
+
+
+        self.pauseButton= Button(self,width= 20,text="⏸",command= self.Pause, bg= "RED")
+        self.pauseButton.grid(row=1,column= 1,pady= 5,padx= 5)
+
+
+        self.resumeButton= Button(self, width=20,text="RESUME",command=self.Resume,bg="LIGHTGREEN")
+        self.resumeButton.grid(row=1,column=1, pady=5, padx=5)
+        self.resumeButton.grid_remove()
+
+
+        self.stopButton= Button(self, width =20,text="⏹",command=self.Stop,bg ="RED")
+        self.stopButton.grid(row= 2,column= 0,pady= 5,padx= 5)
+
+        self.volUpButton= Button(self, width =20,text="VOLUME UP",command=self.VolumeUp,bg ="BLUE")
+        self.volUpButton.grid(row= 1,column= 2,pady= 5,padx= 5)
+
+        self.volDownButton= Button(self, width =20,text="VOLUME DOWN",command=self.VolumeDown,bg ="RED")
+        self.volDownButton.grid(row= 2,column= 2,pady= 5,padx= 5)
+
+    def Browse(self):
+        audioFile = filedialog.askopenfilename(initialdir= "C:\Music",
+                                               title ="Select audio file",filetypes =(("MP3","*.mp3"),("WAV",".wav")))
+        self.trackEntry.insert(0,audioFile)
+
+    def Play(self):
+        audioFile= audioTrack.get()
+        pygame.mixer.music.load(audioFile)
+        pygame.mixer.music.play()
+        self.audioStatus = Label(self, width=20,text="PLAYING (||)",bg="WHITE")
+        self.audioStatus.grid(row=2, column=1, pady=5, padx=5)
+                                 
+    def Pause(self):
+        pygame.mixer.music.pause()
+        self.pauseButton.grid_remove()
+        self.resumeButton.grid()
+        self.audioStatus = Label(self, width=20,text="PAUSED(▶)",bg="RED")
+        self.audioStatus.grid(row=2, column=1, pady=5, padx=5)
+                                 
+    def Resume(self):
+        pygame.mixer.music.unpause()
+        self.resumeButton.grid_remove()
+        self.pauseButton.grid()
+        self.audioStatus = Label(self, width=20,text="RESUMED",bg="LIGHTBLUE")
+        self.audioStatus.grid(row=2, column=1, pady=5, padx=5)
+    def Stop(self):
+        pygame.mixer.music.stop()
+        self.audioStatus=Label(self, width=20,text="STOPPED",bg="RED")
+        self.audioStatus.grid(row=2, column=1, pady=5, padx=5)
+    def VolumeUp(self):
+        pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() + 0.1)
+    def VolumeDown(self):
+        pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() - 0.1)
+
+root = tk.Tk()
+
+root.title("SAMIFY")
+
+root.resizable(10,10)
+
+audioTrack = StringVar(root)
+
+frame = TkMusic(root)
+
+frame.pack()
+
+frame.mainloop()
